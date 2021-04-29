@@ -1,74 +1,56 @@
 from selenium import webdriver
-from webdriver_manager.firefox import GeckoDriverManager
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.keys import Keys
-
-import time
-
-browser = webdriver.Chrome("chromedriver")
- 
- 
-LOGIN_URL = 'https://www.facebook.com/login.php'
- 
-class FacebookLogin():
-    def __init__(self, email, password, browser='Chrome'):
-        # Store credentials for login
-        self.email = email
-        self.password = password
-        if browser == 'Chrome':
-            # Use chrome
-            self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install())
-        elif browser == 'Firefox':
-            # Set it to Firefox
-            self.driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
-        self.driver.get(LOGIN_URL)
-        time.sleep(1) # Wait for some time to load
- 
- 
- 
-    def login(self):
-        email_element = self.driver.find_element_by_id('email')
-        email_element.send_keys(self.email) # Give keyboard input
- 
-        password_element = self.driver.find_element_by_id('pass')
-        password_element.send_keys(self.password) # Give password as input too
- 
-        login_button = self.driver.find_element_by_id('loginbutton')
-        login_button.click() # Send mouse click
- 
-        time.sleep(2) # Wait for 2 seconds for the page to show up
- 
- 
-if __name__ == '__main__':
-    # Enter your login credentials here
-    fb_login = FacebookLogin(email='rohitaswchoudhary@gmail.com', password='RohitaswChoudhary@2002', browser='Chrome')
-    fb_login.login()
+from selenium.webdriver.support.expected_conditions import presence_of_element_located
+from selenium.common.exceptions import NoSuchElementException
+import time 
+import string
 
 
-browser.get('https://www.facebook.com/events/birthdays/')
+#Open  FB 
+driver = webdriver.Chrome(ChromeDriverManager().install())
+driver.get('https://www.facebook.com/')
+print ("Opened facebook")
+userid="rohitaswchoudhary@gmail.com"
+pwd="RohitaswChoudhary@2002"
+time.sleep(5)
 
-feed = 'Happy Birthday !'
+#Login To FB
+emailelement= driver.find_element_by_xpath('.//*[@id="email"]')
+emailelement.send_keys(userid)
+passwordfield= driver.find_element_by_xpath('.//*[@id="pass"]')
+passwordfield.send_keys(pwd)
 
-element = browser.find_elements_by_xpath("//*[@class ='enter_submit\
-	uiTextareaNoResize uiTextareaAutogrow uiStreamInlineTextarea\
-				inlineReplyTextArea mentionsTextarea textInput']")
+login_box = driver.find_element_by_name('login')
+login_box.click()
 
-cnt = 0
+time.sleep(5)
 
-for el in element:
-	cnt += 1
-	element_id = str(el.get_attribute('id'))
-	XPATH = '//*[@id ="' + element_id + '"]'
-	post_field = browser.find_element_by_xpath(XPATH)
-	post_field.send_keys(feed)
-	post_field.send_keys(Keys.RETURN)
-	print("Birthday Wish posted for friend" + str(cnt))
+driver.get("https://www.facebook.com/events/birthdays/")
+time.sleep(5)
+birthdays= driver.find_element_by_id("birthdays_content")
+containers=birthdays.find_elements_by_css_selector("[class='_4-u3']")
+print(len(containers))
+birthdaystoday= containers[0]
 
-# Close the browser
-browser.close()
+
+birthdayslist= birthdaystoday.find_elements_by_css_selector("[class='_tzm']")
+#Looping through today's birthdays 
+for b in birthdayslist:
+    try:
+        name= b.find_element_by_tag_name("a")
+        firstname=((name.get_attribute("title")).split())[0]
+        textbox=b.find_element_by_tag_name("textarea")
+        message= "Happy Birthday " + firstname + " 🎁🎁🎁🎁🎁 !!!!"
+        textbox.send_keys(message)
+        textbox.send_keys(Keys.ENTER)
+    except NoSuchElementException:
+        pass
+
+time.sleep(5)
+#Closing the session
+driver.close()
+

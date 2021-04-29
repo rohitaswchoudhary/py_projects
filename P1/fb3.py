@@ -1,36 +1,29 @@
 from selenium import webdriver
-import time
+from time import sleep
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 
-USERNAME = "rohitaswchoudhary@gmail.com"
-PASSWORD = "RohitaswChoudhary@2002"
+usr="rohitaswchoudhary@gmail.com"
+pwd="RohitaswChoudhary@2002"
 
-driver = webdriver.Chrome('chromedriver')
-driver.get("https://www.facebook.com")
+driver = webdriver.Chrome(ChromeDriverManager().install())
+driver.get('https://www.facebook.com/')
+print ("Opened facebook")
+sleep(1)
 
-user_name_box = driver.find_element_by_id("email")
-user_name_box.send_keys(USERNAME)
+username_box = driver.find_element_by_id('email')
+username_box.send_keys(usr)
+print ("Email Id entered")
+sleep(1)
 
-password_box = driver.find_element_by_id("pass")
-password_box.send_keys(PASSWORD)
+password_box = driver.find_element_by_id('pass')
+password_box.send_keys(pwd)
+print ("Password entered")
 
-login_box = driver.find_element_by_id('loginbutton') 
+login_box = driver.find_element_by_name('login')
 login_box.click()
-print("login successful!!!")
-time.sleep(3)
-right_buttons = driver.find_elements_by_xpath("//*[@class= 'cxgpxx05 sj5x9vvc']")
-right_buttons[1].click()
-time.sleep(1)
-birthday_boxes = driver.find_elements_by_xpath("//*[contains(@aria-label, 'Birthdays')]//*[@class='_1mf _1mj']")
-count = 0
-for els in birthday_boxes:
-    try:
-        count +=1
-        els.send_keys("Happy birthday!")
-        els.send_keys(Keys.RETURN) 
-        print("Birthday Wish posted for friend" + str(count)) 
-    except:
-        print("couldn't post")
 
-print("done")
-time.sleep(2)
-driver.close()
+print ("Done")
+input('Press anything to quit')
+driver.quit()
+print("Finished")

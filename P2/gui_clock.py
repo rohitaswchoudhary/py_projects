@@ -7,7 +7,7 @@ dk.title("Clock")
 dk.minsize(width=610,height=110)
 dk.maxsize(width=600,height=100)
 
-label = Label(dk, font=("ds-digital",80),background="black",foreground='white')
+label = Label(dk, font=("ds-digital",80),background="black",foreground='purple')
 label.pack(anchor='center')
 
 def time():
@@ -18,3 +18,4 @@ def time():
 time()
 
 dk.mainloop()
+
